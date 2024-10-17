@@ -2,48 +2,41 @@ package com.example.secondlab2task
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import android.widget.TextView
 import android.widget.Button
 import net.objecthunter.exp4j.ExpressionBuilder
+import com.example.secondlab2task.databinding.ActivityCalcBinding
 
-class CalcActivity : AppCompatActivity()
-{
+class CalcActivity : AppCompatActivity() {
 
-    private lateinit var expressionTextView: TextView
-    private lateinit var resultTextView: TextView
+    private lateinit var binding: ActivityCalcBinding
     private var expression = ""
     private var expressionText = ""
 
-    override fun onCreate(savedInstanceState: Bundle?)
-    {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_calc)
-
-        expressionTextView = findViewById(R.id.expressionTextView)
-        resultTextView = findViewById(R.id.resultTextView)
+        binding = ActivityCalcBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         val buttons = listOf(
-            R.id.btn0, R.id.btn1, R.id.btn2, R.id.btn3, R.id.btn4,
-            R.id.btn5, R.id.btn6, R.id.btn7, R.id.btn8, R.id.btn9,
-            R.id.btnAdd, R.id.btnSubtract, R.id.btnMultiply, R.id.btnDivide,
-            R.id.btnDecimal
+            binding.btn0, binding.btn1, binding.btn2, binding.btn3, binding.btn4,
+            binding.btn5, binding.btn6, binding.btn7, binding.btn8, binding.btn9,
+            binding.btnAdd, binding.btnSubtract, binding.btnMultiply, binding.btnDivide,
+            binding.btnDecimal
         )
 
-        buttons.forEach { id ->
-            findViewById<Button>(id).setOnClickListener {
+        buttons.forEach { button ->
+            button.setOnClickListener {
                 appendToExpression((it as Button).text.toString())
             }
         }
 
-        findViewById<Button>(R.id.btnClear).setOnClickListener {
+        binding.btnClear.setOnClickListener {
             removeLastCharacter()
         }
     }
 
-    private fun appendToExpression(value: String)
-    {
-        val correctedValue = when (value)
-        {
+    private fun appendToExpression(value: String) {
+        val correctedValue = when (value) {
             "×" -> "*"
             "÷" -> "/"
             else -> value
@@ -53,37 +46,31 @@ class CalcActivity : AppCompatActivity()
         updateExpression()
     }
 
-    private fun removeLastCharacter()
-    {
-        if (expression.isNotEmpty())
-        {
+    private fun removeLastCharacter() {
+        if (expression.isNotEmpty()) {
             expression = expression.substring(0, expression.length - 1)
             expressionText = expressionText.substring(0, expressionText.length - 1)
         }
         updateExpression()
     }
 
-    private fun updateExpression()
-    {
-        expressionTextView.text = expressionText
+    private fun updateExpression() {
+        binding.expressionTextView.text = expressionText
         calculateResult()
     }
 
-    private fun calculateResult()
-    {
-        try
-        {
+    private fun calculateResult() {
+        try {
             val expr = ExpressionBuilder(expression).build()
             val result = expr.evaluate()
 
-            expressionTextView.setTextColor(getColor(R.color.black))
-            resultTextView.setTextColor(getColor(R.color.black))
-            resultTextView.text = result.toString()
-        } catch (e: Exception)
-        {
-            expressionTextView.setTextColor(getColor(R.color.red))
-            resultTextView.setTextColor(getColor(R.color.red))
-            resultTextView.text = "Ошибка"
+            binding.expressionTextView.setTextColor(getColor(R.color.black))
+            binding.resultTextView.setTextColor(getColor(R.color.black))
+            binding.resultTextView.text = result.toString()
+        } catch (e: Exception) {
+            binding.expressionTextView.setTextColor(getColor(R.color.red))
+            binding.resultTextView.setTextColor(getColor(R.color.red))
+            binding.resultTextView.text = "Ошибка"
         }
     }
 }
